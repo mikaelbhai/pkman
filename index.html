@@ -1,26 +1,273 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pac-Man Game</title>
-    <style>
-        #game-board {
-            display: grid;
-            grid-template-columns: repeat(20, 25px);
-        }
-        .cell {
-            width: 25px;
-            height: 25px;
-            border: 1px solid black;
-        }
-        .pacman {
-            background-color: yellow;
-            border-radius: 50%;
-        }
-    </style>
+  <title>Pac-Man</title>
+  <style>
+    #game-board {
+      position: relative;
+      width: 448px;
+      height: 576px;
+      background-color: #000;
+      border: 4px solid #fff;
+    }
+
+    .maze {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      background-color: #000;
+      border: 2px solid #fff;
+    }
+
+    .pacman {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #ff0;
+    }
+
+    .food {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background-color: #fff;
+      border-radius: 50%;
+    }
+
+    .ghost {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #f00;
+    }
+
+    #score {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
-    <div id="game-board"></div>
+  <div id="game-board"></div>
+  <div id="score">Score: 0</div>
 
-    <script src="script.js"></script>
+  <script>
+    const gameBoard = document.getElementById('game-board');
+    const scoreElement = document.getElementById('score');
+
+    const mazeLayout = [
+      // Maze layout goes here, represented by a 2D array
+    ];
+
+    const gameSettings = {
+      width: mazeLayout[0].length * 24,
+      height: mazeLayout.length * 24,
+      pacmanSpeed: 6,
+      ghostSpeed: 4,
+      foodPoints: 10,
+    };
+
+    let pacman;
+    let ghosts = [];
+    let score = 0;
+
+    function createMaze() {
+      for (let row = 0; row < mazeLayout.length; row++) {
+        for (let col = 0; col < mazeLayout[row].length; col++) {
+          const cell = document.createElement('div');
+          cell.classList.add('maze');
+          cell.style.top = `${row * 24}px`;
+          cell.style.left = `${col * 24}px`;
+          if (mazeLayout[row][col] === 0) {
+            const food = document.createElement('div');
+            food.classList.add('food');
+            cell.appendChild(food);
+          }
+          gameBoard.appendChild(cell);
+        }
+      }
+    }
+
+    function createPacman() {
+      pacman = document.createElement('div');
+      pacman.classList.add('pacman');
+      gameBoard.appendChild(pacman);
+      positionPacman();
+    }
+
+    function positionPacman() {
+      pacman.style.top = `${Math.floor(gameSettings.height / 2) - 10}px`;
+      pacman.style.left = `${Math.floor(gameSettings.width / 2) - 10}px`;
+    }
+
+    function createGhost() {
+      const ghost = document.createElement('div');
+      ghost.classList.add('ghost');
+      gameBoard.appendChild(ghost);
+      ghosts.push({
+        element: ghost,
+        direction: 'right',
+        top: 0,
+        left: 0,
+      });
+      positionGhost(ghosts.length - 1);
+    }
+
+    function positionGhost(index) {
+      const ghost = ghosts[index];
+      const { element } = ghost;
+      element.style.top = `${ghost.top}px`;
+      element.style.left = `${ghost.left}px`;
+    }
+
+    function handleKeyPress(event) {
+      const key = event.key;
+      const { top, left } = getPosition(pacman);
+      switch (key) {
+        case 'ArrowUp':
+          movePacman(top - gameSettings.pacmanSpeed, left, 'up');
+          break;
+        case 'ArrowDown':
+          movePacman(top + gameSettings.pacmanSpeed, left, 'down');
+          break;
+        case 'ArrowLeft':
+          movePacman(top, left - gameSettings.pacmanSpeed, 'left');
+          break;
+        case 'ArrowRight':
+          movePacman(top, left + gameSettings.pacmanSpeed, 'right');
+          break;
+      }
+    }
+
+    function movePacman(top, left, direction) {
+      if (canMoveTo(top, left)) {
+        pacman.style.top = `${top}px`;
+        pacman.style.left = `${left}px`;
+        checkCollision();
+        checkFoodEaten();
+      }
+      checkGameEnd();
+    }
+
+    function canMoveTo(top, left) {
+      const pacmanRect = pacman.getBoundingClientRect();
+      const walls = document.querySelectorAll('.maze');
+      for (let i = 0; i < walls.length; i++) {
+        const wallRect = walls[i].getBoundingClientRect();
+        if (isCollision(pacmanRect, wallRect)) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function isCollision(rect1, rect2) {
+      return (
+        rect1.left < rect2.right &&
+        rect1.right > rect2.left &&
+        rect1.top < rect2.bottom &&
+        rect1.bottom > rect2.top
+      );
+    }
+
+    function getPosition(element) {
+      const rect = element.getBoundingClientRect();
+      return {
+        top: rect.top,
+        left: rect.left,
+      };
+    }
+
+    function checkCollision() {
+      const pacmanRect = pacman.getBoundingClientRect();
+      const ghostsRects = ghosts.map((ghost) => ghost.element.getBoundingClientRect());
+      for (let i = 0; i < ghostsRects.length; i++) {
+        if (isCollision(pacmanRect, ghostsRects[i])) {
+          endGame();
+        }
+      }
+    }
+
+    function checkFoodEaten() {
+      const pacmanRect = pacman.getBoundingClientRect();
+      const foods = document.querySelectorAll('.food');
+      for (let i = 0; i < foods.length; i++) {
+        const foodRect = foods[i].getBoundingClientRect();
+        if (isCollision(pacmanRect, foodRect)) {
+          foods[i].parentNode.removeChild(foods[i]);
+          score += gameSettings.foodPoints;
+          scoreElement.textContent = `Score: ${score}`;
+        }
+      }
+    }
+
+    function checkGameEnd() {
+      const foods = document.querySelectorAll('.food');
+      if (foods.length === 0) {
+        endGame(true);
+      }
+    }
+
+    function endGame(victory = false) {
+      if (victory) {
+        alert(`Congratulations! You won with a score of ${score}`);
+      } else {
+        alert(`Game over! Your score: ${score}`);
+      }
+      location.reload();
+    }
+
+    createMaze();
+    createPacman();
+    createGhost();
+    document.addEventListener('keydown', handleKeyPress);
+
+    // Ghost movement logic goes here
+    setInterval(() => {
+      for (let i = 0; i < ghosts.length; i++) {
+        const ghost = ghosts[i];
+        const { top, left, direction } = ghost;
+        let newTop = top;
+        let newLeft = left;
+        switch (direction) {
+          case 'up':
+            newTop -= gameSettings.ghostSpeed;
+            break;
+          case 'down':
+            newTop += gameSettings.ghostSpeed;
+            break;
+          case 'left':
+```html
+            newLeft -= gameSettings.ghostSpeed;
+            break;
+          case 'right':
+            newLeft += gameSettings.ghostSpeed;
+            break;
+        }
+
+        if (canMoveTo(newTop, newLeft)) {
+          ghost.top = newTop;
+          ghost.left = newLeft;
+          positionGhost(i);
+        } else {
+          // Randomly change direction if the ghost hits a wall
+          const possibleDirections = ['up', 'down', 'left', 'right'];
+          possibleDirections.splice(possibleDirections.indexOf(direction), 1);
+          ghost.direction = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
+        }
+
+        // Check collision with Pac-Man
+        const ghostRect = ghost.element.getBoundingClientRect();
+        const pacmanRect = pacman.getBoundingClientRect();
+        if (isCollision(ghostRect, pacmanRect)) {
+          endGame();
+        }
+      }
+    }, 100); // Adjust the ghost movement speed by changing the interval duration
+  </script>
 </body>
 </html>
