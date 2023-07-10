@@ -1,17 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
   const gameBoard = document.getElementById('game-board');
   const scoreElement = document.getElementById('score');
-  
-const mazeLayout = [
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1],
-  [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-  [1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1],
-  [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-];
 
+  const mazeLayout = [
+    // Maze layout goes here, represented by a 2D array
+  ];
 
   const mazeWidth = mazeLayout[0].length;
   const mazeHeight = mazeLayout.length;
@@ -54,30 +47,20 @@ const mazeLayout = [
   }
 
   function handleKeyPress(event) {
-  const key = event.key.toLowerCase();
+    const key = event.key.toLowerCase();
 
-  let newPacmanX = pacmanX;
-  let newPacmanY = pacmanY;
+    let newPacmanX = pacmanX;
+    let newPacmanY = pacmanY;
 
-  if (key === 'w' && pacmanY > 0) {
-    newPacmanY -= 1;
-  } else if (key === 'a' && pacmanX > 0) {
-    newPacmanX -= 1;
-  } else if (key === 's' && pacmanY < mazeHeight - 1) {
-    newPacmanY += 1;
-  } else if (key === 'd' && pacmanX < mazeWidth - 1) {
-    newPacmanX += 1;
-  }
-
-  if (mazeLayout[newPacmanY][newPacmanX] !== 1) {
-    pacmanX = newPacmanX;
-    pacmanY = newPacmanY;
-    updatePacmanPosition();
-  }
-  
-  checkCollision();
-}
-
+    if (key === 'w' && pacmanY > 0) {
+      newPacmanY -= 1;
+    } else if (key === 'a' && pacmanX > 0) {
+      newPacmanX -= 1;
+    } else if (key === 's' && pacmanY < mazeHeight - 1) {
+      newPacmanY += 1;
+    } else if (key === 'd' && pacmanX < mazeWidth - 1) {
+      newPacmanX += 1;
+    }
 
     if (mazeLayout[newPacmanY][newPacmanX] !== 1) {
       pacmanX = newPacmanX;
