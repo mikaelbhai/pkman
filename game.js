@@ -13,19 +13,22 @@ document.addEventListener('DOMContentLoaded', () => {
       cell.classList.add('maze');
       cell.style.top = `${row * 24}px`;
       cell.style.left = `${col * 24}px`;
+
       if (mazeLayout[row][col] === 0) {
         const food = document.createElement('div');
         food.classList.add('food');
+        cell.style.position = 'relative';
+        food.style.position = 'absolute';
         food.style.top = '50%';
         food.style.left = '50%';
         food.style.transform = 'translate(-50%, -50%)';
         cell.appendChild(food);
       }
+
       gameBoard.appendChild(cell);
     }
   }
 }
-
 
   function createPacman() {
     const pacman = document.createElement('div');
