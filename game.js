@@ -2,9 +2,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const gameBoard = document.getElementById('game-board');
   const scoreElement = document.getElementById('score');
 
-  const mazeLayout = [
-    // Maze layout goes here, represented by a 2D array
-  ];
+ const mazeLayout = [
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+  [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+  [1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1],
+  [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+];
+
 
   const mazeWidth = mazeLayout[0].length;
   const mazeHeight = mazeLayout.length;
