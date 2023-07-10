@@ -1,81 +1,37 @@
 document.addEventListener('DOMContentLoaded', () => {
   const gameBoard = document.getElementById('game-board');
-  const mazeLayout = [
-    // Maze layout goes here, represented by a 2D array
-  ];
 
-  let score = 0;
+  const pacman = document.createElement('div');
+  pacman.classList.add('pacman');
+  gameBoard.appendChild(pacman);
 
-  function createMaze() {
-    for (let row = 0; row < mazeLayout.length; row++) {
-      for (let col = 0; col < mazeLayout[row].length; col++) {
-        const cell = document.createElement('div');
-        cell.classList.add('maze');
-        cell.style.top = `${row * 24}px`;
-        cell.style.left = `${col * 24}px`;
+  const cellSize = 24;
+  const gameBoardWidth = gameBoard.offsetWidth;
+  const gameBoardHeight = gameBoard.offsetHeight;
 
-        if (mazeLayout[row][col] === 0) {
-          const food = document.createElement('div');
-          food.classList.add('food');
-          cell.style.position = 'relative';
-          food.style.position = 'absolute';
-          food.style.top = '50%';
-          food.style.left = '50%';
-          food.style.transform = 'translate(-50%, -50%)';
-          cell.appendChild(food);
-        }
+  let pacmanX = 0;
+  let pacmanY = 0;
 
-        gameBoard.appendChild(cell);
-      }
-    }
-  }
-
-  function createPacman() {
-    const pacman = document.createElement('div');
-    pacman.classList.add('pacman');
-    gameBoard.appendChild(pacman);
-    return pacman;
-  }
-
-  function createGhost() {
-    const ghost = document.createElement('div');
-    ghost.classList.add('ghost');
-    gameBoard.appendChild(ghost);
-    return ghost;
+  function updatePacmanPosition() {
+    pacman.style.transform = `translate(${pacmanX * cellSize}px, ${pacmanY * cellSize}px)`;
   }
 
   function handleKeyPress(event) {
-    // Handle arrow key presses to move Pac-Man
-    // Implement movement logic here
-  }
+    const key = event.key.toLowerCase();
+    const pacmanSpeed = 1;
 
-  function checkCollision() {
-    // Check for collision between Pac-Man and ghosts or food
-    // Implement collision detection logic here
-  }
-
-  function updateScore() {
-    const scoreElement = document.getElementById('score');
-    if (scoreElement) {
-      scoreElement.textContent = `Score: ${score}`;
+    if (key === 'w' && pacmanY > 0) {
+      pacmanY -= pacmanSpeed;
+    } else if (key === 'a' && pacmanX > 0) {
+      pacmanX -= pacmanSpeed;
+    } else if (key === 's' && pacmanY < gameBoardHeight / cellSize - 1) {
+      pacmanY += pacmanSpeed;
+    } else if (key === 'd' && pacmanX < gameBoardWidth / cellSize - 1) {
+      pacmanX += pacmanSpeed;
     }
+
+    updatePacmanPosition();
   }
 
-  function updateGame() {
-    // Update the game state
-    // Implement game logic here
-  }
-
-  function gameLoop() {
-    updateGame();
-    checkCollision();
-    updateScore();
-    requestAnimationFrame(gameLoop);
-  }
-
-  createMaze();
-  const pacman = createPacman();
-  const ghost = createGhost();
   document.addEventListener('keydown', handleKeyPress);
-  gameLoop();
 });
