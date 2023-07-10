@@ -6,22 +6,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let score = 0;
 
-  function createMaze() {
-    for (let row = 0; row < mazeLayout.length; row++) {
-      for (let col = 0; col < mazeLayout[row].length; col++) {
-        const cell = document.createElement('div');
-        cell.classList.add('maze');
-        cell.style.top = `${row * 24}px`;
-        cell.style.left = `${col * 24}px`;
-        if (mazeLayout[row][col] === 0) {
-          const food = document.createElement('div');
-          food.classList.add('food');
-          cell.appendChild(food);
-        }
-        gameBoard.appendChild(cell);
+ function createMaze() {
+  for (let row = 0; row < mazeLayout.length; row++) {
+    for (let col = 0; col < mazeLayout[row].length; col++) {
+      const cell = document.createElement('div');
+      cell.classList.add('maze');
+      cell.style.top = `${row * 24}px`;
+      cell.style.left = `${col * 24}px`;
+      if (mazeLayout[row][col] === 0) {
+        const food = document.createElement('div');
+        food.classList.add('food');
+        food.style.top = '50%';
+        food.style.left = '50%';
+        food.style.transform = 'translate(-50%, -50%)';
+        cell.appendChild(food);
       }
+      gameBoard.appendChild(cell);
     }
   }
+}
+
 
   function createPacman() {
     const pacman = document.createElement('div');
